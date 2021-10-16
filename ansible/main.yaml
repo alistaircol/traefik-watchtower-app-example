@@ -1,0 +1,15 @@
+---
+- hosts: bnss
+  become: true
+
+  vars_files:
+  - variables/docker.yaml
+  - variables/docker-compose.yaml
+
+  tasks:
+  - name: Developer message
+    ansible.builtin.debug:
+      msg: Remember to add vars_files on main.yaml...
+
+  - include: plays/install-docker.yaml
+  - include: plays/install-docker-compose.yaml

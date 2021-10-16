@@ -1,0 +1,6 @@
+---
+docker_compose_version: 1.29.2
+docker_compose_binary_remote: >-
+  https://github.com/docker/compose/releases/download/{{ docker_compose_version }}
+  /docker-compose-{{ ansible_facts['system'] }}-{{ ansible_facts['architecture'] }}
+docker_compose_binary_local: /usr/local/bin/docker-compose

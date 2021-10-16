@@ -1,0 +1,23 @@
+---
+- name: Check if docker-compose binary exists for downloading
+  stat:
+    path: "{{ docker_compose_binary_local }}"
+  register: docker_compose
+
+- name: Download docker-compose binary if not exists
+  get_url:
+    url: "{{ docker_compose_binary_remote }}"
+    dest: "{{ docker_compose_binary_local }}"
+  when: not docker_compose.stat.exists
+
+- name: Check if docker-compose binary exists for chmodding
+  stat:
+    path: "{{ docker_compose_binary_local }}"
+  register: docker_compose
+
+- name: Make docker-compose binary executable
+  ansible.builtin.file:
+    path: "{{ docker_compose_binary_local }}"
+    state: file
+    mode: +x
+  when: docker_compose.stat.exists

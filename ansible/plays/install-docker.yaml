@@ -1,0 +1,48 @@
+---
+- name: Check if docker is already installed
+  stat:
+    path: "{{ docker_binary_local }}"
+  register: docker
+
+- name: Update apt caches
+  apt:
+    update_cache: true
+
+- name: Install required system packages
+  apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - python3-pip
+    - virtualenv
+    - python3-setuptools
+    - neofetch
+    - pv
+    - git
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  when: not docker.stat.exists
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+  when: not docker.stat.exists
+
+- name: Update apt and install docker-ce
+  apt:
+    pkg:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+  when: not docker.stat.exists
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+  when: not docker.stat.exists
