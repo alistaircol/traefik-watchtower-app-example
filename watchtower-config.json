@@ -1,0 +1,7 @@
+{
+    "auths": {
+        "local.registry.ac93.uk:5000": {
+            "auth": ""
+        }
+    }
+}

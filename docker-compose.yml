@@ -1,0 +1,54 @@
+---
+version: "3.9"
+services:
+  watchtower:
+    image: containrrr/watchtower
+    command:
+    - --debug
+    - --http-api-update
+    - --http-api-token=6Zet8EN8yaZFz42A84xcKDdwRMvGmw7L
+    - --notifications=slack
+    - --notification-slack-hook-url=${watchtower_slack_hook_url}
+    - --notification-slack-icon-emoji=':smartpepe:'
+    - --notification-slack-identifier=ally-dev-server
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./watchtower-config.json:/config.json
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.watchtower.entrypoints=http
+    - traefik.http.routers.watchtower.rule=Host(`watchtower.${domain_name:-poc.ac93.uk}`)
+    - traefik.http.routers.watchtower.service=watchtower
+    - traefik.http.services.watchtower.loadbalancer.server.port=8080
+
+  traefik:
+    image: traefik:v2.4
+    container_name: ${docker_container_name_prefix:-poc}_traefik
+    command:
+    - --api.insecure=false
+    - --api.dashboard=true
+    - --api.debug=true
+    - --log.level=DEBUG
+    - --accesslog=true
+    - --providers.docker=true
+    - --providers.docker.exposedbydefault=false
+    - --entrypoints.http.address=:80
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.traefik.entrypoints=http
+    - traefik.http.routers.traefik.rule=Host(`traefik.${domain_name:-poc.ac93.uk}`)
+    - traefik.http.routers.traefik.service=api@internal
+    ports:
+    - 80:80
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  app:
+    image: local.registry.ac93.uk:5000/alistaircol/ac93-app:latest
+    container_name: ${docker_container_name_prefix:-poc}_app
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.app.entrypoints=http
+    - traefik.http.routers.app.rule=Host(`app.${domain_name:-poc.ac93.uk}`)
+    - traefik.http.routers.app.service=app
+    - traefik.http.services.app.loadbalancer.server.port=80
