@@ -1,0 +1,19 @@
+- name: Add motd file for neofetch
+  ansible.builtin.copy:
+    # https://stackoverflow.com/a/21699210
+    content: |
+      #!/usr/bin/env bash
+      neofetch
+    dest: "{{ motd_neofetch_filename }}"
+
+- name: Check neofetch motd exists before chmodding
+  stat:
+    path: "{{ motd_neofetch_filename }}"
+  register: neofetch_motd
+
+- name: Set motd file for neofetch to be executable
+  ansible.builtin.file:
+    path: "{{ motd_neofetch_filename }}"
+    state: file
+    mode: +x
+  when: neofetch_motd.stat.exists

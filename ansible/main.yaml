@@ -5,6 +5,7 @@
   vars_files:
   - variables/docker.yaml
   - variables/docker-compose.yaml
+  - variables/motd-neofetch.yaml
 
   tasks:
   - name: Developer message
@@ -13,3 +14,4 @@
 
   - include: plays/install-docker.yaml
   - include: plays/install-docker-compose.yaml
+  - include: plays/add-motd-neofetch.yaml
