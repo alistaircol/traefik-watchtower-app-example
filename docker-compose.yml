@@ -7,6 +7,7 @@ services:
     - --debug
     - --http-api-update
     - --http-api-token=6Zet8EN8yaZFz42A84xcKDdwRMvGmw7L
+    - --no-startup-message
     - --notifications=slack
     - --notification-slack-hook-url=${watchtower_slack_hook_url}
     - --notification-slack-icon-emoji=':smartpepe:'
